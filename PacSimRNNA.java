@@ -12,6 +12,7 @@ import pacsim.PacmanCell;
 /**
  * RNNA
  * @author Julian Quitian, Ley Widley
+ * @version 10/08/2017
  */
 public class PacSimRNNA implements PacAction {
    
