@@ -34,7 +34,7 @@ public class PacSimRNNA implements PacAction {
 	@Override
 	public void init() {
 		simTime = 0;
-		path = null;
+		path = new ArrayList();
 	}
    
 	/*
@@ -49,9 +49,15 @@ public class PacSimRNNA implements PacAction {
 	 */
 	@Override
 	public PacFace action( Object state ) {
-		
+
+		PacCell[][] grid = (PacCell[][]) state;
+		PacmanCell pc = PacUtils.findPacman(grid);
+
+		// Make sure Pac-Man is in the game
+		if (pc == null) return null;
+
 		// Step 1: Compute RNNA solution path only when method is first called
-		if(path == null){
+		if(path.isEmpty()){
 			path = new ArrayList();
 			//TODO compute solution path
 		}
