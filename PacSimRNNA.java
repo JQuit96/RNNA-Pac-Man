@@ -34,16 +34,25 @@ public class PacSimRNNA implements PacAction {
    @Override
    public void init() {
       simTime = 0;
-      path = new ArrayList();	
+      path = null;
    }
    
 	/*
+	 * Inputs:
+	 *		- Object that will be 2D array of PacCell cells.
 	 * Requirements:
 	 * 	1) Compute RNNA solution path through input maze exactly one time
+	 *			a) Extract Pac-Man's starting location
+	 *			b) Extract location of all food dots
+	 *			c) Determine valid successors of a location by taking into account which cells are walls and which are not
 	 *		2) Determine Direction to move Pac-Man for next move
 	 */
    @Override
    public PacFace action( Object state ) {
 		
+		// Compute RNNA solution path only when method is first called
+		if(path == null){
+			path = new ArrayList();
+		}
    }
 }
