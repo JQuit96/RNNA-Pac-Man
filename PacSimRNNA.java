@@ -16,26 +16,26 @@ import pacsim.PacmanCell;
  */
 public class PacSimRNNA implements PacAction {
    
-   private List<Point> path;
-   private int simTime;
+	private List<Point> path;
+	private int simTime;
       
-   public PacSimRNNA( String fname ) {
-      PacSim sim = new PacSim( fname );
-      sim.init(this);
-   }
+	public PacSimRNNA( String fname ) {
+		PacSim sim = new PacSim( fname );
+		sim.init(this);
+	}
    
-   public static void main( String[] args ) {
-      System.out.println("\nTSP using RNNA agent by Julian Quitian & Ley Widley:");
-      System.out.println("\nMaze : " + args[ 0 ] + "\n" );
-      new PacSimRNNA( args[ 0 ] );
-   }
+	public static void main( String[] args ) {
+		System.out.println("\nTSP using RNNA agent by Julian Quitian & Ley Widley:");
+		System.out.println("\nMaze : " + args[ 0 ] + "\n" );
+		new PacSimRNNA( args[ 0 ] );
+	}
 
 	// Use this method to reset any variables that must be re-initialized before runs
-   @Override
-   public void init() {
-      simTime = 0;
-      path = null;
-   }
+	@Override
+	public void init() {
+		simTime = 0;
+		path = null;
+	}
    
 	/*
 	 * Inputs:
@@ -47,12 +47,15 @@ public class PacSimRNNA implements PacAction {
 	 *			c) Determine valid successors of a location by taking into account which cells are walls and which are not
 	 *		2) Determine Direction to move Pac-Man for next move
 	 */
-   @Override
-   public PacFace action( Object state ) {
+	@Override
+	public PacFace action( Object state ) {
 		
-		// Compute RNNA solution path only when method is first called
+		// Step 1: Compute RNNA solution path only when method is first called
 		if(path == null){
 			path = new ArrayList();
+			//TODO compute solution path
 		}
+
+		// TODO Note current position and next step; return NSEW direction in form of PacFace enum
    }
 }
