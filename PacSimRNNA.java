@@ -30,14 +30,20 @@ public class PacSimRNNA implements PacAction {
       new PacSimRNNA( args[ 0 ] );
    }
 
+	// Use this method to reset any variables that must be re-initialized before runs
    @Override
    public void init() {
       simTime = 0;
       path = new ArrayList();	
    }
    
+	/*
+	 * Requirements:
+	 * 	1) Compute RNNA solution path through input maze exactly one time
+	 *		2) Determine Direction to move Pac-Man for next move
+	 */
    @Override
    public PacFace action( Object state ) {
-	
+		
    }
 }
