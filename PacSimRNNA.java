@@ -27,7 +27,7 @@ public class PacSimRNNA implements PacAction {
 	public static void main( String[] args ) {
 		System.out.println("\nTSP using RNNA agent by Julian Quitian & Ley Widley:");
 		System.out.println("\nMaze : " + args[ 0 ] + "\n" );
-		//new PacSimRNNA( args[ 0 ] );
+		new PacSimRNNA( args[ 0 ] );
 	}
 
 	// Use this method to reset any variables that must be re-initialized before runs
@@ -61,6 +61,7 @@ public class PacSimRNNA implements PacAction {
 		if(path.isEmpty()){
 			// Generate the Food array
 			List<Point> allFoodPellets = generateFoodArray(grid);
+
 			int population = 0, cost = 0; 
 			// Calculate each step in the algorithm 
 			for(int i = 0; i < allFoodPellets.size(); i++)
@@ -71,7 +72,7 @@ public class PacSimRNNA implements PacAction {
 				for (int j = 0; j < allFoodPellets.size(); j++)
 				{
 					Point currentFood = allFoodPellets.get(j);
-					cost = PacUtils.manhattanDistance(pc.loc, currentFood);
+					cost = PacUtils.manhattanDistance(pc.getLoc(), currentFood);
 					System.out.println(population + " : cost="+ cost + " : [( "+
 					currentFood.getX() + "," + currentFood.getY() + ")," +
 							cost + "]");
@@ -81,10 +82,16 @@ public class PacSimRNNA implements PacAction {
 
 			//TODO compute solution path
 		}
-
-		// TODO Note current position and next step; return NSEW direction in form of PacFace enum
 		
+		// TODO Note current position and next step; return NSEW direction in form of PacFace enum
+		// Change! Added only for testing purposes.
+		Point tgt = PacUtils.nearestFood(pc.getLoc(), grid);
+		path = BFSPath.getPath(grid, pc.getLoc(), tgt);
+		Point next = path.remove(0);
+		PacFace face = PacUtils.direction(pc.getLoc(), next);
+		return face;
    }
+
 	// Given the grid, get all the food location 
 	// from the grid, and then print them out. 
 	public List<Point> generateFoodArray(PacCell[][] G)
