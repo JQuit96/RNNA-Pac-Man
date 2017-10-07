@@ -59,6 +59,10 @@ public class PacSimRNNA implements PacAction {
 
 		// Step 1: Compute RNNA solution path only when method is first called
 		if(path.isEmpty()){
+						
+			// Generate cost table
+			int[][] costTable = generateCostTable(grid, pc);
+
 			// Generate the Food array
 			List<Point> allFoodPellets = generateFoodArray(grid);
 
@@ -104,5 +108,42 @@ public class PacSimRNNA implements PacAction {
 		}
 		
 		return allFood; 
+	}
+
+	// Prints and returns 2D adjacency matrix where Pacman is first row/column and
+	// all other entries are food pellets.
+	private int[][] generateCostTable(PacCell[][] G, PacmanCell pc){
+		
+		List<Point> foodPellets = PacUtils.findFood(G);
+
+		// Cost table size is n+1 by n+1
+		int tableSize = foodPellets.size() + 1;
+		int[][] costTable = new int[tableSize][tableSize];
+		
+		for(int x = 1; x < tableSize; x++){
+			int cost = BFSPath.getPath(G, pc.getLoc(), foodPellets.get(x - 1)).size();
+			costTable[0][x] = cost;
+			costTable[x][0] = cost;
+		}
+		
+		for(int x = 1; x < tableSize; x++){
+			for(int y = 1; y < tableSize; y++){
+				costTable[x][y] = BFSPath.getPath(G, foodPellets.get(x - 1), foodPellets.get(y - 1)).size();
+				}
+		}
+		
+		// Print cost table
+		System.out.println("Cost table:\n");
+		for(int x = 0; x < tableSize; x++){
+			for(int y = 0; y < tableSize; y++){
+				//System.out.print(" " + costTable[x][y]);
+				System.out.printf("%-3d", costTable[x][y]);
+			}
+			System.out.println();
+		}
+		
+		System.out.println("\n");
+
+		return costTable;
 	}
 }
