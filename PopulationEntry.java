@@ -35,9 +35,8 @@ public class PopulationEntry
 		return this.pathStr;
 	}
 	
-	public void addPoint(Point newPoint, int addedCost)
+	public void addPoint(Point newPoint)
 	{
 		this.path.add(newPoint);
-		setCost(this.cost + addedCost);
 	}
 }

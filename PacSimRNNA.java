@@ -84,16 +84,17 @@ public class PacSimRNNA implements PacAction {
 						PopulationEntry p = new PopulationEntry(); 
 						populationList.add(p); 
 					}
+
 					Point currentFood = allFoodPellets.get(j);
 					// Calculate the cost from pacman's current location to get current food 
 					cost = PacUtils.manhattanDistance(pc.getLoc(), currentFood);
 
 					// Add new food pellet in point format to and set new cost
-					//populationList.get(j).addPoint(currentFood, cost);
+					populationList.get(j).addPoint(currentFood);
 	
 					// Set the cost for that particular population entry 
 					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
-					// Get the path in a string format 
+					// Get the path in a string format
 					pathStr = "[("+ (int)currentFood.getX() + "," + (int)currentFood.getY() +
 							")," + populationList.get(j).getCost() + "]";
 					populationList.get(j).setPathStr(populationList.get(j).getPathStr() + pathStr);
