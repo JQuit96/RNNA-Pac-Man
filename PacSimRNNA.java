@@ -82,6 +82,7 @@ public class PacSimRNNA implements PacAction {
 							cost + "]");
 					population++;
 				}
+				System.out.println();
 			}
 
 			//TODO compute solution path
@@ -106,6 +107,7 @@ public class PacSimRNNA implements PacAction {
 		{
 			System.out.println(i + " : (" + allFood.get(i).getX() + "," + allFood.get(i).getY() + ")");
 		}
+		System.out.println();
 		
 		return allFood; 
 	}
@@ -122,6 +124,7 @@ public class PacSimRNNA implements PacAction {
 		
 		for(int x = 1; x < tableSize; x++){
 			int cost = BFSPath.getPath(G, pc.getLoc(), foodPellets.get(x - 1)).size();
+				System.exit(-1);
 			costTable[0][x] = cost;
 			costTable[x][0] = cost;
 		}
