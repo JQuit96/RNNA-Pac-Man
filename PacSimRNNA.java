@@ -1,6 +1,11 @@
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+
+import java.util.Collections;
+
 import pacsim.BFSPath;
 import pacsim.PacAction;
 import pacsim.PacCell;
@@ -68,6 +73,8 @@ public class PacSimRNNA implements PacAction {
 
 			int population = 0, cost = 0; 
 			String pathStr = "";
+			Point pacManLoc = new Point(); 
+			Point currentFood; 
 			List<PopulationEntry> populationList = new ArrayList<>();
 			// Calculate each step in the algorithm 
 			for(int i = 0; i < allFoodPellets.size(); i++)
@@ -75,22 +82,30 @@ public class PacSimRNNA implements PacAction {
 				System.out.println("Population at step " + (i+1) + ":");
 				population = 0; 
 				cost = 0;
+				
 				for (int j = 0; j < allFoodPellets.size(); j++)
 				{
 					// If we're in the first step, then instantiate 
 					// each population entry and add them to the list
+					
 					if (i == 0)
 					{
 						PopulationEntry p = new PopulationEntry(); 
 						populationList.add(p); 
+						pacManLoc = pc.getLoc(); 
+						currentFood = allFoodPellets.get(j);
 					}
-					Point currentFood = allFoodPellets.get(j);
+					else
+					{
+						pacManLoc = populationList.get(j).getPoint(i-1); 
+					}
+					
 					// Calculate the cost from pacman's current location to get current food 
-					cost = PacUtils.manhattanDistance(pc.getLoc(), currentFood);
+					cost = PacUtils.manhattanDistance(pacManLoc, currentFood);
 
 					// Add new food pellet in point format to and set new cost
-					//populationList.get(j).addPoint(currentFood, cost);
-	
+					populationList.get(j).addPoint(currentFood);
+
 					// Set the cost for that particular population entry 
 					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
 					// Get the path in a string format 
@@ -98,9 +113,26 @@ public class PacSimRNNA implements PacAction {
 							")," + populationList.get(j).getCost() + "]";
 					populationList.get(j).setPathStr(populationList.get(j).getPathStr() + pathStr);
 					
-					System.out.println(population + " : cost="+ populationList.get(j).getCost() +
-							populationList.get(j).getPathStr());
-					population++;
+					Collections.sort(populationList, new Comparator<PopulationEntry>()
+					{
+
+						@Override
+						public int compare(PopulationEntry o1, PopulationEntry o2) {
+							if(o1.getCost() > o2.getCost())
+							{
+								return 1;
+							}
+							else if (o1.getCost() == o2.getCost())
+							{
+								return 0; 
+							}
+							else
+							{
+								return -1; 
+							}
+						}
+						
+					});
 					
 										
 					/*TODO
@@ -111,6 +143,15 @@ public class PacSimRNNA implements PacAction {
 					 * 
 					 */
 				}
+				
+				for (int j = 0 ; j < populationList.size(); j++)
+				{
+					System.out.println(population + " : cost="+ populationList.get(j).getCost() + " : " +
+							populationList.get(j).getPathStr());
+					population++;
+
+				}
+				
 				System.out.println();
 			}
 
