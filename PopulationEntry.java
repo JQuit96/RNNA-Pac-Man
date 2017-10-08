@@ -1,5 +1,6 @@
 import java.awt.Point;
 import java.util.List;
+import java.util.ArrayList;
 
 public class PopulationEntry
 {
@@ -10,7 +11,8 @@ public class PopulationEntry
 	public PopulationEntry()
 	{
 		cost = 0; 
-		pathStr = ""; 
+		pathStr = "";
+		path = new ArrayList();
 	}
 	
 	public void setCost(int cost)
@@ -31,5 +33,11 @@ public class PopulationEntry
 	public String getPathStr()
 	{
 		return this.pathStr;
+	}
+	
+	public void addPoint(Point newPoint, int addedCost)
+	{
+		this.path.add(newPoint);
+		setCost(this.cost + addedCost);
 	}
 }

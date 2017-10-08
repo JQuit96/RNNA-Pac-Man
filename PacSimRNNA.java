@@ -9,7 +9,6 @@ import pacsim.PacSim;
 import pacsim.PacUtils;
 import pacsim.PacmanCell;
 
-
 /**
  * RNNA
  * @author Julian Quitian, Ley Widley
@@ -50,7 +49,7 @@ public class PacSimRNNA implements PacAction {
 	 */
 	@Override
 	public PacFace action( Object state ) {
-
+		
 		PacCell[][] grid = (PacCell[][]) state;
 		PacmanCell pc = PacUtils.findPacman(grid);
 
@@ -60,7 +59,7 @@ public class PacSimRNNA implements PacAction {
 
 		// Step 1: Compute RNNA solution path only when method is first called
 		if(path.isEmpty()){
-						
+
 			// Generate cost table
 			int[][] costTable = generateCostTable(grid, pc);
 
@@ -73,12 +72,12 @@ public class PacSimRNNA implements PacAction {
 			// Calculate each step in the algorithm 
 			for(int i = 0; i < allFoodPellets.size(); i++)
 			{
-				System.out.println("Population at step " + i + ":");
+				System.out.println("Population at step " + (i+1) + ":");
 				population = 0; 
 				cost = 0;
 				for (int j = 0; j < allFoodPellets.size(); j++)
 				{
-					// If we're in the first step, then instanctiate 
+					// If we're in the first step, then instantiate 
 					// each population entry and add them to the list
 					if (i == 0)
 					{
@@ -88,6 +87,10 @@ public class PacSimRNNA implements PacAction {
 					Point currentFood = allFoodPellets.get(j);
 					// Calculate the cost from pacman's current location to get current food 
 					cost = PacUtils.manhattanDistance(pc.getLoc(), currentFood);
+
+					// Add new food pellet in point format to and set new cost
+					//populationList.get(j).addPoint(currentFood, cost);
+	
 					// Set the cost for that particular population entry 
 					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
 					// Get the path in a string format 
@@ -99,11 +102,12 @@ public class PacSimRNNA implements PacAction {
 							populationList.get(j).getPathStr());
 					population++;
 					
+										
 					/*TODO
 					 * 1 - Get path in point format
 					 * 2 - Find a way to sort entry based on cost 
 					 * 3 - Change Pacman location 
-					 * 4 - Add logic to handle if the cost is the same with another (Brancing)
+					 * 4 - Add logic to handle if the cost is the same with another (Branching)
 					 * 
 					 */
 				}
@@ -112,7 +116,7 @@ public class PacSimRNNA implements PacAction {
 
 			//TODO compute solution path
 		}
-		
+	
 		// TODO Note current position and next step; return NSEW direction in form of PacFace enum
 		// Change! Added only for testing purposes.
 		Point tgt = PacUtils.nearestFood(pc.getLoc(), grid);
@@ -142,18 +146,17 @@ public class PacSimRNNA implements PacAction {
 	private int[][] generateCostTable(PacCell[][] G, PacmanCell pc){
 		
 		List<Point> foodPellets = PacUtils.findFood(G);
-
+		
 		// Cost table size is n+1 by n+1
 		int tableSize = foodPellets.size() + 1;
 		int[][] costTable = new int[tableSize][tableSize];
-		
+	
 		for(int x = 1; x < tableSize; x++){
 			int cost = BFSPath.getPath(G, pc.getLoc(), foodPellets.get(x - 1)).size();
-				System.exit(-1);
 			costTable[0][x] = cost;
 			costTable[x][0] = cost;
 		}
-		
+
 		for(int x = 1; x < tableSize; x++){
 			for(int y = 1; y < tableSize; y++){
 				costTable[x][y] = BFSPath.getPath(G	, foodPellets.get(x - 1), foodPellets.get(y - 1)).size();
