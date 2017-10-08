@@ -97,23 +97,33 @@ public class PacSimRNNA implements PacAction {
 					}
 					else
 					{
-						pacManLoc = populationList.get(j).getPoint(i-1); 
+						// System.out.println("i: " + i + "  j: " + j);
+						pacManLoc = populationList.get(j).getPoint(i-1);
+						
+						// Get available food pellet closest to last simulated PacMan location
+						currentFood = getClosestPellet(populationList.get(j), allFoodPellets, costTable, pacManLoc);
 					}
 
 					// Calculate the cost from pacman's current location to get current food 
-					cost = PacUtils.manhattanDistance(pacManLoc, currentFood);
+					cost = BFSPath.getPath(grid, pacManLoc, currentFood).size();
+						
+					//System.out.println("Adding " + currentFood + " to " + j);
+					//populationList.get(j).printPath();
+					
+					// Set the cost for that particular population entry 
+					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
+					
+					//System.out.println("Distance between " + pacManLoc + " and " + currentFood + " is " + populationList.get(j).getCost());
 
 					// Add new food pellet in point format to and set new cost
 					populationList.get(j).addPoint(currentFood);
 
-					// Set the cost for that particular population entry 
-					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
 					// Get the path in a string format
 					pathStr = "[("+ (int)currentFood.getX() + "," + (int)currentFood.getY() +
-							")," + populationList.get(j).getCost() + "]";
+							")," + cost + "]";
 					populationList.get(j).setPathStr(populationList.get(j).getPathStr() + pathStr);
 					
-					Collections.sort(populationList, new Comparator<PopulationEntry>()
+					/*Collections.sort(populationList, new Comparator<PopulationEntry>()
 					{
 
 						@Override
@@ -132,26 +142,28 @@ public class PacSimRNNA implements PacAction {
 							}
 						}
 						
-					});
+					});*/
 					
+					System.out.println(population + " : cost="+ populationList.get(j).getCost() + " : " +
+							populationList.get(j).getPathStr());
+					population++;
+
 										
 					/*TODO
-					 * 1 - Get path in point format
 					 * 2 - Find a way to sort entry based on cost 
-					 * 3 - Change Pacman location 
 					 * 4 - Add logic to handle if the cost is the same with another (Branching)
-					 * 
 					 */
 				}
 				
 				for (int j = 0 ; j < populationList.size(); j++)
 				{
-					System.out.println(population + " : cost="+ populationList.get(j).getCost() + " : " +
-							populationList.get(j).getPathStr());
-					population++;
-
+					/*
+					for(Point a : populationList.get(j).getPath()){
+						System.out.print("(" + a.getX() + ", " + a.getY() + ")  ");
+					}
+					System.out.println();*/
 				}
-				
+	
 				System.out.println();
 			}
 
@@ -218,4 +230,29 @@ public class PacSimRNNA implements PacAction {
 
 		return costTable;
 	}
+	
+	// Returns Point representing food pellet closest to last entry in foodPellets
+	private Point getClosestPellet(PopulationEntry currentPath, List<Point> foodPellets, int[][] costTable, Point pacmanLoc){
+		
+		//System.out.println("Looking at: (" + pacmanLoc.getX() + ", " + pacmanLoc.getY() + ")");
+		Point chosenPoint = new Point();
+		int minDistance = Integer.MAX_VALUE;
+
+		// Figure out pacmanLoc index
+		int indexOfPacman = foodPellets.indexOf(pacmanLoc) + 1;
+
+		for(int x = 0; x < foodPellets.size(); x++){
+			//System.out.println("Checking Food: (" + foodPellets.get(x).getX() + ", " + foodPellets.get(x).getY() + ")");
+			if(!(currentPath.getPath().contains(foodPellets.get(x)))){
+				//System.out.println("Distance to pellet " + x + " is " + costTable[x + 1][indexOfPacman]);
+				if((x + 1) != indexOfPacman && costTable[x + 1][indexOfPacman] < minDistance){
+					chosenPoint = foodPellets.get(x);
+					minDistance = costTable[x + 1][indexOfPacman];
+				}
+			} 
+		}
+		//System.out.println(chosenPoint.getX() + ", " + chosenPoint.getY());
+		return chosenPoint;
+	}
+
 }

@@ -38,12 +38,20 @@ public class PopulationEntry
 	public void addPoint(Point newPoint)
 	{
 		this.path.add(newPoint);
-<<<<<<< HEAD
-=======
 	}
+
 	public Point getPoint(int index)
 	{
 		return path.get(index); 
->>>>>>> c71587c98828c830e0112639f70ddcc2c08aa803
+	}
+
+	public List<Point> getPath(){
+		return path;
+	}
+	
+	public void printPath(){
+		for(Point x : path)
+			System.out.print(x + "  ");
+		System.out.println();
 	}
 }
