@@ -9,6 +9,7 @@ import pacsim.PacSim;
 import pacsim.PacUtils;
 import pacsim.PacmanCell;
 
+
 /**
  * RNNA
  * @author Julian Quitian, Ley Widley
@@ -67,6 +68,8 @@ public class PacSimRNNA implements PacAction {
 			List<Point> allFoodPellets = generateFoodArray(grid);
 
 			int population = 0, cost = 0; 
+			String pathStr = "";
+			List<PopulationEntry> populationList = new ArrayList<>();
 			// Calculate each step in the algorithm 
 			for(int i = 0; i < allFoodPellets.size(); i++)
 			{
@@ -75,12 +78,34 @@ public class PacSimRNNA implements PacAction {
 				cost = 0;
 				for (int j = 0; j < allFoodPellets.size(); j++)
 				{
+					// If we're in the first step, then instanctiate 
+					// each population entry and add them to the list
+					if (i == 0)
+					{
+						PopulationEntry p = new PopulationEntry(); 
+						populationList.add(p); 
+					}
 					Point currentFood = allFoodPellets.get(j);
+					// Calculate the cost from pacman's current location to get current food 
 					cost = PacUtils.manhattanDistance(pc.getLoc(), currentFood);
-					System.out.println(population + " : cost="+ cost + " : [( "+
-					currentFood.getX() + "," + currentFood.getY() + ")," +
-							cost + "]");
+					// Set the cost for that particular population entry 
+					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
+					// Get the path in a string format 
+					pathStr = "[("+ (int)currentFood.getX() + "," + (int)currentFood.getY() +
+							")," + populationList.get(j).getCost() + "]";
+					populationList.get(j).setPathStr(populationList.get(j).getPathStr() + pathStr);
+					
+					System.out.println(population + " : cost="+ populationList.get(j).getCost() +
+							populationList.get(j).getPathStr());
 					population++;
+					
+					/*TODO
+					 * 1 - Get path in point format
+					 * 2 - Find a way to sort entry based on cost 
+					 * 3 - Change Pacman location 
+					 * 4 - Add logic to handle if the cost is the same with another (Brancing)
+					 * 
+					 */
 				}
 				System.out.println();
 			}
@@ -105,7 +130,7 @@ public class PacSimRNNA implements PacAction {
 		System.out.println("Food Array\n");
 		for (int i = 0; i < allFood.size(); i++)
 		{
-			System.out.println(i + " : (" + allFood.get(i).getX() + "," + allFood.get(i).getY() + ")");
+			System.out.println(i + " : (" + (int)allFood.get(i).getX() + "," + (int)allFood.get(i).getY() + ")");
 		}
 		System.out.println();
 		
@@ -131,7 +156,7 @@ public class PacSimRNNA implements PacAction {
 		
 		for(int x = 1; x < tableSize; x++){
 			for(int y = 1; y < tableSize; y++){
-				costTable[x][y] = BFSPath.getPath(G, foodPellets.get(x - 1), foodPellets.get(y - 1)).size();
+				costTable[x][y] = BFSPath.getPath(G	, foodPellets.get(x - 1), foodPellets.get(y - 1)).size();
 				}
 		}
 		
