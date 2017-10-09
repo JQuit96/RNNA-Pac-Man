@@ -49,6 +49,10 @@ public class PopulationEntry
 		return path;
 	}
 	
+	public void setPath(List<Point> newPath){
+		this.path = newPath;
+	}
+	
 	public void printPath(){
 		for(Point x : path)
 			System.out.print(x + "  ");
