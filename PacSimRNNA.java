@@ -73,12 +73,12 @@ public class PacSimRNNA implements PacAction {
 			// Generate the Food array
 			List<Point> allFoodPellets = generateFoodArray(grid);
 
-			int population = 0, cost = 0; 
+			int population = 0, cost = 0, previousCost =0; 
 			String pathStr = "";
 			Point pacManLoc = new Point(); 
 			Point currentFood; 
 			List<PopulationEntry> populationList = new ArrayList<>();
-
+			List<Point> previousPath = new ArrayList<>();
 			ArrayList<Point> closestPellets = new ArrayList<Point>();
 
 			List<PopulationEntry> popListCopy = new ArrayList<>();
@@ -104,11 +104,9 @@ public class PacSimRNNA implements PacAction {
 						populationList.add(p); 
 						pacManLoc = pc.getLoc(); 
 						currentFood = allFoodPellets.get(j);
-						previousPathStr = populationList.get(j).getPathStr();
 					}
 					else
 					{
-						previousPathStr = populationList.get(j).getPathStr();
 
 						closestPellets.clear();
 
@@ -118,39 +116,13 @@ public class PacSimRNNA implements PacAction {
 						// Get available food pellets closest to last simulated PacMan location. Branch if more than one available
 						closestPellets = getClosestPellets(populationList.get(j), allFoodPellets, costTable, pacManLoc);
 						currentFood = closestPellets.get(0);
-					
-						if(closestPellets.size() > 1){
-							System.out.println("Branching off: " + j + " to " + closestPellets.get(0) + " and " + closestPellets.get(1));
-							
-							// Branch off
-							for(int x = 1; x < closestPellets.size(); x++){
-								int tempCost = BFSPath.getPath(grid, pacManLoc, currentFood).size();
-								PopulationEntry newEntry = new PopulationEntry();
-								populationList.add(j+x,newEntry);
-
-								// Add path
-								newEntry.setPath(populationList.get(j).getPath());
-									
-								newEntry.setCost(populationList.get(j).getCost() + tempCost);
-								newEntry.addPoint(closestPellets.get(x));
-								
-								pathStr = "[("+ (int)closestPellets.get(x).getX() + "," + (int)closestPellets.get(x).getY() +
-								")," + tempCost + "]";
-								populationList.get(j).setPathStr(previousPathStr + pathStr);
-	
-								System.out.println(population + " : cost="+ newEntry.getCost() + " : " +
-									populationList.get(j+x).getPathStr());
-								population++;
-							}
-						}
 	
 					}
-
+					previousPathStr = populationList.get(j).getPathStr();
+					previousPath = populationList.get(j).getPath();
+					previousCost = populationList.get(j).getCost();
 					// Calculate the cost from pacman's current location to get current food 
-					cost = BFSPath.getPath(grid, pacManLoc, currentFood).size();
-						
-					//System.out.println("Adding " + currentFood + " to " + j);
-					//populationList.get(j).printPath();
+					cost = BFSPath.getPath(grid, pacManLoc, currentFood).size();						
 					
 					// Set the cost for that particular population entry 
 					populationList.get(j).setCost(populationList.get(j).getCost() + cost);
@@ -164,14 +136,30 @@ public class PacSimRNNA implements PacAction {
 					pathStr = "[("+ (int)currentFood.getX() + "," + (int)currentFood.getY() +
 							")," + cost + "]";
 					populationList.get(j).setPathStr(previousPathStr + pathStr);
-					
-					
+					/*
+					if(closestPellets.size() > 1){
+					//	System.out.println("Branching off: " + j + " to " + closestPellets.get(0) + " and " + closestPellets.get(1));
+						
+						// Branch off
+						for(int x = 1; x < closestPellets.size(); x++){
+								int tempCost = BFSPath.getPath(grid, pacManLoc, closestPellets.get(x)).size();
+								System.out.println("The distance from " + pacManLoc +  " to " + closestPellets.get(x) +  " is " + 
+										tempCost);
+								PopulationEntry newEntry = new PopulationEntry();
+								populationList.add(newEntry);
+								// Add path
+								populationList.get(populationList.size() -1).setPath(previousPath);
+								populationList.get(populationList.size() -1).setCost(previousCost + tempCost);
+								populationList.get(populationList.size()-1).addPoint(closestPellets.get(x));
+							
+								pathStr = "[("+ (int)closestPellets.get(x).getX() + "," + (int)closestPellets.get(x).getY() +
+										")," + tempCost + "]";
+								populationList.get(populationList.size()-1).setPathStr(previousPathStr + pathStr);
+						}
+					}
 
 										
-					/*TODO
-					 * 2 - Find a way to sort entry based on cost 
-					 * 4 - Add logic to handle if the cost is the same with another (Branching)
-					 */
+					*/
 				}
 
 				popListCopy = populationList; 
