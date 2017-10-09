@@ -23,6 +23,7 @@ public class PacSimRNNA implements PacAction {
    
 	private List<Point> path;
 	private int simTime;
+	int solutionMoves = 0; 
       
 	public PacSimRNNA( String fname ) {
 		PacSim sim = new PacSim( fname );
@@ -39,6 +40,7 @@ public class PacSimRNNA implements PacAction {
 	@Override
 	public void init() {
 		simTime = 0;
+		solutionMoves = 0; 
 		path = new ArrayList();
 	}
    
@@ -76,6 +78,7 @@ public class PacSimRNNA implements PacAction {
 			Point pacManLoc = new Point(); 
 			Point currentFood; 
 			List<PopulationEntry> populationList = new ArrayList<>();
+			List<PopulationEntry> popListCopy = new ArrayList<>();
 			// Calculate each step in the algorithm 
 			for(int i = 0; i < allFoodPellets.size(); i++)
 			{
@@ -123,30 +126,7 @@ public class PacSimRNNA implements PacAction {
 							")," + cost + "]";
 					populationList.get(j).setPathStr(populationList.get(j).getPathStr() + pathStr);
 					
-					/*Collections.sort(populationList, new Comparator<PopulationEntry>()
-					{
-
-						@Override
-						public int compare(PopulationEntry o1, PopulationEntry o2) {
-							if(o1.getCost() > o2.getCost())
-							{
-								return 1;
-							}
-							else if (o1.getCost() == o2.getCost())
-							{
-								return 0; 
-							}
-							else
-							{
-								return -1; 
-							}
-						}
-						
-					});*/
 					
-					System.out.println(population + " : cost="+ populationList.get(j).getCost() + " : " +
-							populationList.get(j).getPathStr());
-					population++;
 
 										
 					/*TODO
@@ -154,28 +134,61 @@ public class PacSimRNNA implements PacAction {
 					 * 4 - Add logic to handle if the cost is the same with another (Branching)
 					 */
 				}
-				
-				for (int j = 0 ; j < populationList.size(); j++)
+				popListCopy = populationList; 
+				Collections.sort(popListCopy, new Comparator<PopulationEntry>()
 				{
-					/*
-					for(Point a : populationList.get(j).getPath()){
-						System.out.print("(" + a.getX() + ", " + a.getY() + ")  ");
+
+					@Override
+					public int compare(PopulationEntry o1, PopulationEntry o2) {
+						if(o1.getCost() > o2.getCost())
+						{
+							return 1;
+						}
+						else if (o1.getCost() == o2.getCost())
+						{
+							return 0; 
+						}
+						else
+						{
+							return -1; 
+						}
 					}
-					System.out.println();*/
+					
+				});
+				for (int j = 0 ; j < popListCopy.size(); j++)
+				{
+					System.out.println(population + " : cost="+ popListCopy.get(j).getCost() + " : " +
+							popListCopy.get(j).getPathStr());
+					population++;
 				}
 	
-				System.out.println();
 			}
-
+			List<Point> stepsToTake = null; 
+			path.add(popListCopy.get(0).getPath().get(0));
+			for (int i = 0; i < popListCopy.get(0).getPath().size() -1; i++)
+			{
+				stepsToTake = BFSPath.getPath(grid, popListCopy.get(0).getPath().get(i), popListCopy.get(0).getPath().get(i+1));
+				for(int j = 0; j < stepsToTake.size(); j++)
+				{
+					path.add(stepsToTake.get(j));
+				}
+				
+			}
+			
 			//TODO compute solution path
+			System.out.println("Solution moves\n");
 		}
+	
 	
 		// TODO Note current position and next step; return NSEW direction in form of PacFace enum
 		// Change! Added only for testing purposes.
-		Point tgt = PacUtils.nearestFood(pc.getLoc(), grid);
-		path = BFSPath.getPath(grid, pc.getLoc(), tgt);
+	//	Point tgt = PacUtils.nearestFood(pc.getLoc(), grid);
+	//	path = BFSPath.getPath(grid, pc.getLoc(), tgt);
 		Point next = path.remove(0);
 		PacFace face = PacUtils.direction(pc.getLoc(), next);
+		System.out.println(solutionMoves + " : From [  " + (int)pc.getLoc().getX()+ ",  " +
+				(int)pc.getLoc().getY() +" ] go "+ face);
+		solutionMoves++; 
 		return face;
    }
 
