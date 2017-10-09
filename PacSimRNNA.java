@@ -15,6 +15,8 @@ import pacsim.PacUtils;
 import pacsim.PacmanCell;
 
 /**
+ * University of Central Florida 
+ * CAP4630 - Fall 2017
  * RNNA
  * @author Julian Quitian, Ley Widley
  * @version 10/08/2017
